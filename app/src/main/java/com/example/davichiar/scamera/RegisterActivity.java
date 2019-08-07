@@ -1,26 +1,21 @@
-package com.example.davichiar.addavichi;
+package com.example.davichiar.scamera;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.davichiar.addavichi.R;
 
 import org.json.JSONObject;
 

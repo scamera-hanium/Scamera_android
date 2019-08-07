@@ -1,23 +1,18 @@
-package com.example.davichiar.addavichi;
+package com.example.davichiar.scamera;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.os.AsyncTask;
-import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
+import com.example.davichiar.addavichi.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,8 +24,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class SearchActivity extends AppCompatActivity {
 

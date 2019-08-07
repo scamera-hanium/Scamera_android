@@ -1,27 +1,16 @@
-package com.example.davichiar.addavichi;
+package com.example.davichiar.scamera;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import com.example.davichiar.addavichi.R;
+
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NoticeListAdapter extends BaseAdapter {

@@ -1,4 +1,4 @@
-package com.example.davichiar.addavichi;
+package com.example.davichiar.scamera;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

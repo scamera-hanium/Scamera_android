@@ -1,4 +1,4 @@
-package com.example.davichiar.addavichi;
+package com.example.davichiar.scamera;
 
 public class Notice {
 

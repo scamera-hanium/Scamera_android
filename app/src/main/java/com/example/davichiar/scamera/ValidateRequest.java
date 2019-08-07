@@ -1,4 +1,4 @@
-package com.example.davichiar.addavichi;
+package com.example.davichiar.scamera;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;

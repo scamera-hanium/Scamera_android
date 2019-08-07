@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:layout_marginVertical="10dp"
     android:layout_marginHorizontal="10dp"
-    tools:context=".MainActivity">
+    tools:context="com.example.davichiar.scamera.MainActivity">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
             android:id="@+id/homeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ADDAVICHI"
+            android:text="SCamera"
             android:textColor="@color/colorGray"
             android:textSize="45dp"
             android:textStyle="bold"

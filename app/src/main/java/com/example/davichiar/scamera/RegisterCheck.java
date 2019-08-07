@@ -1,4 +1,4 @@
-package com.example.davichiar.addavichi;
+package com.example.davichiar.scamera;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -6,18 +6,16 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterRequest extends StringRequest {
+public class RegisterCheck extends StringRequest {
 
-    final static private String URL = "http://davichiar1.cafe24.com/UserRegister.php";
+    final static private String URL = "http://davichiar1.cafe24.com/UserCheck.php";
     private Map<String, String> parameters;
 
-    public RegisterRequest(String userID, String userPassword, String userEmail, String userCheck, Response.Listener<String> listener) {
+    public RegisterCheck(String userID, String userCheck, Response.Listener<String> listener) {
         super(Method.POST, URL, listener, null);
         parameters = new HashMap<>();
 
         parameters.put("userID", userID);
-        parameters.put("userPassword", userPassword);
-        parameters.put("userEmail", userEmail);
         parameters.put("userCheck", userCheck);
     }
 
