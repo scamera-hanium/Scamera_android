@@ -4,45 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
-    tools:context="com.example.davichiar.scamera.SearchActivity">
+    tools:context=".Search.SearchActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:layout_margin="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="130dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/galleryView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ProgressBar
+                android:id="@+id/processBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
 
         <LinearLayout
+            android:layout_marginTop="130dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:id="@+id/notice">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/rect">
 
-                <TextView
+                <EditText
                     android:id="@+id/writeTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="검색 결과"
-                    android:textColor="@color/colorGray"
-                    android:textSize="25dp"
+                    android:layout_width="300dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginBottom="5dp"
+                    android:textColor="#4374D9"
+                    android:clickable="false"
+                    android:lines="1"
                     android:textStyle="bold"
-                    android:layout_marginTop="10dp"/>
+                    android:background="@android:color/transparent"/>
 
-                <TextView
-                    android:id="@+id/readTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="검색 수 : "
-                    android:textColor="@color/colorGray"
-                    android:textSize="15dp"
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:clickable="false"
+                    android:background="#D9E5FF"
+                    android:layout_gravity="center"
+                    android:src="@drawable/search" />
             </LinearLayout>
 
             <LinearLayout
@@ -260,6 +291,32 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/gradient2"/>
+
+                <TextView
+                    android:id="@+id/readTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="블로그 리뷰 검색 수 (최근 100개 내역) : "
+                    android:textColor="@color/colorGray"
+                    android:textSize="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"/>
+            </LinearLayout>
+
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -267,7 +324,6 @@
                 android:layout_margin="10dp"
                 android:dividerHeight="10dp"
                 android:divider="#ffffff">
-
             </ListView>
         </LinearLayout>
 
