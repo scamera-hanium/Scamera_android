@@ -23,9 +23,11 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -33,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.davichiar.scamera_android.ImageSearch.ImageSearchActivity;
 import com.example.davichiar.scamera_android.Main.MainActivity;
 import com.example.davichiar.scamera_android.NaverImagePrint.GalleryAdapter;
 import com.example.davichiar.scamera_android.NaverImagePrint.NaverImage;
@@ -40,6 +43,8 @@ import com.example.davichiar.scamera_android.NaverImagePrint.NaverImageItem;
 import com.example.davichiar.scamera_android.NaverImagePrint.RestAPI;
 import com.example.davichiar.scamera_android.NaverImagePrint.RestListenner;
 import com.example.davichiar.scamera_android.R;
+import com.google.android.gms.vision.text.Line;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -57,13 +62,12 @@ public class SearchActivity extends AppCompatActivity {
     private ListView noticeListView;
     private NoticeListAdapter adapter;
     private List<Notice> noticedList;
-    private AsyncTask<Void, Void, String> mTask;
+    private AsyncTask<Void, Void, String> mTask=null;
     private Handler mHandler;
     private int timeTask = 0;
     private float addtest1 = 0, addtest2 = 0, acttest1 = 0, acttest2 = 0, sumtest = 0;
     private String nametest = "미판정";
-    private long timeCheck = 0;
-    private int checkButton1 = 0, checkButton2 = 0;
+    private int button1_count = 0, button2_count = 0;
 
     RecyclerView galleryView;
     ProgressBar processBar;
@@ -72,7 +76,7 @@ public class SearchActivity extends AppCompatActivity {
     String pText, name;
     long lastClickTime = 0;
     long totalImages = 0;
-    int final_check = 0, delaytime=1000;
+    int final_check = 0, delaytime = 1000;
     CircleChart circleChart;
 
     PendingIntent intent, pendingIntent;
@@ -109,6 +113,7 @@ public class SearchActivity extends AppCompatActivity {
 
         noticeListView = (ListView)findViewById(R.id.noticeListView);
         noticedList = new ArrayList<Notice>();
+        noticedList.clear();
 
         adapter = new NoticeListAdapter(getApplicationContext(), noticedList);
         noticeListView.setAdapter(adapter);
@@ -120,98 +125,191 @@ public class SearchActivity extends AppCompatActivity {
         writeTextView.setText(name);
         writeTextView.clearFocus();
 
+        noticeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String url = noticedList.get(position).getSearchLink();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+                // Toast.makeText(getApplicationContext(), noticedList.get(position).getSearchLink(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
-                mTask = new BackgroundTask();
-                mTask.execute();
 
-                readTextView.setText("블로그 리뷰 검색 수 (최근 100개 내역) : " + Math.round(sumtest) + "개");
+                if(mTask == null) {
+                    mTask = new BackgroundTask();
+                    mTask.execute();
+                    // Toast.makeText(getApplicationContext(), mTask.getStatus().toString(), Toast.LENGTH_SHORT).show();
+                    mHandler.sendEmptyMessage(100);
+                }
+                else if(final_check == 1) { }
 
-                if(addtest1 > 0 && addtest2 > 0) {
-                    button1_1.setText("청정게시물 : " + Math.round(addtest1) + "개");
-                    button1_2.setText("광고게시물 : " + Math.round(addtest2) + "개");
-                    button1_3.setText("광고퍼센트 : " + Math.round(addtest2 / sumtest * 100) + "%");
+                else if(mTask.getStatus() == AsyncTask.Status.RUNNING) {
+                    mHandler.sendEmptyMessageDelayed(100, delaytime);
+                }
 
-                    if (Math.round(addtest2 / sumtest * 100) > 70) {
-                        button1.setBackgroundColor(getResources().getColor(R.color.colorP3));
-                    }
-                    else if (Math.round(addtest2 / sumtest * 100) > 40) {
-                        button1.setBackgroundColor(getResources().getColor(R.color.colorP2));
+                else if(mTask.getStatus() == AsyncTask.Status.FINISHED) {
+                    // Toast.makeText(getApplicationContext(), mTask.getStatus().toString(), Toast.LENGTH_SHORT).show();
+                    readTextView.setText("블로그 리뷰 검색 수 (최근 100개 내역) : " + Math.round(sumtest) + "개");
+
+                    if(addtest1 > 0 && addtest2 > 0) {
+                        button1_1.setText("청정게시물 : " + Math.round(addtest1) + "개");
+                        button1_2.setText("광고게시물 : " + Math.round(addtest2) + "개");
+                        button1_3.setText("광고퍼센트 : " + Math.round(addtest2 / sumtest * 100) + "%");
+
+                        if (Math.round(addtest2 / sumtest * 100) > 70) {
+                            button1.setBackgroundColor(getResources().getColor(R.color.colorP3));
+                        }
+                        else if (Math.round(addtest2 / sumtest * 100) > 40) {
+                            button1.setBackgroundColor(getResources().getColor(R.color.colorP2));
+                        }
+                        else {
+                            button1.setBackgroundColor(getResources().getColor(R.color.colorP1));
+                        }
+
+                        // initData(Math.round(addtest1 / sumtest * 100), Math.round(addtest2 / sumtest * 100));
                     }
                     else {
-                        button1.setBackgroundColor(getResources().getColor(R.color.colorP1));
+                        button1_1.setText("-");
+                        button1_2.setText("-");
+                        button1_3.setText("-");
                     }
 
-                    // initData(Math.round(addtest1 / sumtest * 100), Math.round(addtest2 / sumtest * 100));
-                }
-                else {
-                    button1_1.setText("-");
-                    button1_2.setText("-");
-                    button1_3.setText("-");
-                }
+                    if(acttest1 > 0 || acttest2 > 0) {
+                        button2_1.setText("긍정게시물 : " + Math.round(acttest1) + "개");
+                        button2_2.setText("부정게시물 : " + Math.round(acttest2) + "개");
+                        button2_3.setText("종합퍼센트 : " + Math.round(acttest1 / addtest1 * 100) + "%");
 
-                if(acttest1 > 0 || acttest2 > 0) {
-                    button2_1.setText("긍정게시물 : " + Math.round(acttest1) + "개");
-                    button2_2.setText("부정게시물 : " + Math.round(acttest2) + "개");
-                    button2_3.setText("종합퍼센트 : " + Math.round(acttest1 / addtest1 * 100) + "%");
-
-                    if (Math.round(acttest1 / addtest1 * 100) > 70) {
-                        button2.setBackgroundColor(getResources().getColor(R.color.colorP1));
-                    }
-                    else if (Math.round(acttest1 / addtest1 * 100) > 40) {
-                        button2.setBackgroundColor(getResources().getColor(R.color.colorP2));
+                        if (Math.round(acttest1 / addtest1 * 100) > 70) {
+                            button2.setBackgroundColor(getResources().getColor(R.color.colorP1));
+                        }
+                        else if (Math.round(acttest1 / addtest1 * 100) > 40) {
+                            button2.setBackgroundColor(getResources().getColor(R.color.colorP2));
+                        }
+                        else {
+                            button2.setBackgroundColor(getResources().getColor(R.color.colorP3));
+                        }
                     }
                     else {
-                        button2.setBackgroundColor(getResources().getColor(R.color.colorP3));
+                        button2_1.setText("-");
+                        button2_2.setText("-");
+                        button2_3.setText("-");
                     }
-                }
-                else {
-                    button2_1.setText("-");
-                    button2_2.setText("-");
-                    button2_3.setText("-");
-                }
 
-                if(!nametest.equals("미판정")) {
-                    String temp[] = nametest.split("'");
+                    if(!nametest.equals("미판정")) {
+                        String temp[] = nametest.split("'");
 
-                    button3_1.setText("" + temp[1] + "개");
-                    button3_2.setText("" + temp[3] + "개");
-                    button3_3.setText("" + temp[5] + "개");
-                    button3.setBackgroundColor(getResources().getColor(R.color.colorP1));
+                        button3_1.setText("" + temp[1] + "개");
+                        button3_2.setText("" + temp[3] + "개");
+                        button3_3.setText("" + temp[5] + "개");
+                        button3.setBackgroundColor(getResources().getColor(R.color.colorP1));
 
-                    if(final_check == 0) {
-                        builder.setContentTitle("SCamera") // required
-                                .setContentText("상품 분석이 완료되었습니다.")  // required
-                                .setDefaults(Notification.DEFAULT_ALL) // 알림, 사운드 진동 설정
-                                .setAutoCancel(true) // 알림 터치시 반응 후 삭제
-                                .setSound(RingtoneManager
-                                        .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                                .setSmallIcon(R.drawable.logo_title)
-                                .setLargeIcon(BitmapFactory.decodeResource(getResources()
-                                        , R.drawable.logo))
-                                .setBadgeIconType(R.drawable.logo)
-                                .setContentIntent(pendingIntent);
-                        notifManager.notify(0, builder.build());
+                        if(final_check == 0) {
+                            builder.setContentTitle("SCamera") // required
+                                    .setContentText("상품 분석이 완료되었습니다.")  // required
+                                    .setDefaults(Notification.DEFAULT_ALL) // 알림, 사운드 진동 설정
+                                    .setAutoCancel(true) // 알림 터치시 반응 후 삭제
+                                    .setSound(RingtoneManager
+                                            .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                                    .setSmallIcon(R.drawable.logo_title)
+                                    .setLargeIcon(BitmapFactory.decodeResource(getResources()
+                                            , R.drawable.logo))
+                                    .setBadgeIconType(R.drawable.logo)
+                                    .setContentIntent(pendingIntent);
+                            notifManager.notify(0, builder.build());
 
-                        final_check = 1;
-                        delaytime = 100000;
+                            final_check = 1;
+                        }
                     }
+                    else {
+                        button3_1.setText("-");
+                        button3_2.setText("-");
+                        button3_3.setText("-");
+                    }
+                    mTask = new BackgroundTask();
+                    mTask.execute();
+
+                    mHandler.sendEmptyMessage(100);
                 }
-                else {
-                    button3_1.setText("-");
-                    button3_2.setText("-");
-                    button3_3.setText("-");
-                }
-                mHandler.sendEmptyMessageDelayed(100, delaytime);
             }
         };
         mHandler.sendEmptyMessage(100);
+
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(button1_count == 0) {
+                    if(final_check == 1 && addtest1 > 0) {
+                        Toast.makeText(getApplicationContext(), "필터링 : 청정게시물", Toast.LENGTH_SHORT).show();
+                        button1_count = 1;
+                        mTask = new BackgroundTask();
+                        mTask.execute();
+                    }
+                    else if(final_check == 1 && addtest1 == 0) {
+                        Toast.makeText(getApplicationContext(), "청정 게시물이 없습니다.", Toast.LENGTH_SHORT).show();
+                        button1_count = 1;
+                    }
+                }
+                else {
+                    if(final_check == 1) {
+                        Toast.makeText(getApplicationContext(), "필터링 해제", Toast.LENGTH_SHORT).show();
+                        button1_count = 0;
+                        mTask = new BackgroundTask();
+                        mTask.execute();
+                    }
+                }
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(button2_count == 0) {
+                    if(final_check == 1 && acttest1 > 0) {
+                        Toast.makeText(getApplicationContext(), "필터링 : 긍정게시물", Toast.LENGTH_SHORT).show();
+                        button2_count = 1;
+                        mTask = new BackgroundTask();
+                        mTask.execute();
+                    }
+                    else if(final_check == 1 && acttest1 == 0) {
+                        Toast.makeText(getApplicationContext(), "긍정 게시물이 없습니다.", Toast.LENGTH_SHORT).show();
+                        button2_count = 1;
+                    }
+                }
+                else if(button2_count == 1) {
+                    if(final_check == 1 && acttest2 > 0) {
+                        Toast.makeText(getApplicationContext(), "필터링 : 부정게시물", Toast.LENGTH_SHORT).show();
+                        button2_count = 2;
+                        mTask = new BackgroundTask();
+                        mTask.execute();
+                    }
+                    else if(final_check == 1 && acttest2 == 0) {
+                        Toast.makeText(getApplicationContext(), "부정 게시물이 없습니다.", Toast.LENGTH_SHORT).show();
+                        button2_count = 2;
+                    }
+                }
+                else {
+                    if(final_check == 1) {
+                        Toast.makeText(getApplicationContext(), "필터링 해제", Toast.LENGTH_SHORT).show();
+                        button2_count = 0;
+                        mTask = new BackgroundTask();
+                        mTask.execute();
+                    }
+                }
+            }
+        });
 
         viewPreference();
         initRecycler();
 
         searchImageByQueryText(false);
         detectScrollToLast();
+
+        RelativeLayout imageViewLayout = (RelativeLayout) findViewById(R.id.imageViewLayout);
+        LinearLayout noticeViewLayout = (LinearLayout) findViewById(R.id.notice);
+        RelativeLayout fragmentViewLayout = (RelativeLayout) findViewById(R.id.fragment);
     }
 
     private void initData(int Data1, int Data2){
@@ -408,8 +506,22 @@ public class SearchActivity extends AppCompatActivity {
                     if(searchActive.equals("부정"))
                         actcount2++;
 
-                    Notice notice = new Notice(searchTitle, searchLink, searchImglink, searchContext, searchDate, searchNicname, searchAdd, searchActive, searchText);
-                    noticedList.add(notice);
+                    if(button1_count == 0 && button2_count == 0) {
+                        Notice notice = new Notice(searchTitle, searchLink, searchImglink, searchContext, searchDate, searchNicname, searchAdd, searchActive, searchText);
+                        noticedList.add(notice);
+                    }
+                    else if(searchAdd.equals("청정") && button2_count == 0) {
+                        Notice notice = new Notice(searchTitle, searchLink, searchImglink, searchContext, searchDate, searchNicname, searchAdd, searchActive, searchText);
+                        noticedList.add(notice);
+                    }
+                    else if(searchAdd.equals("청정") && searchActive.equals("긍정") && button2_count == 1) {
+                        Notice notice = new Notice(searchTitle, searchLink, searchImglink, searchContext, searchDate, searchNicname, searchAdd, searchActive, searchText);
+                        noticedList.add(notice);
+                    }
+                    else if(searchAdd.equals("청정") && searchActive.equals("부정") && button2_count == 2) {
+                        Notice notice = new Notice(searchTitle, searchLink, searchImglink, searchContext, searchDate, searchNicname, searchAdd, searchActive, searchText);
+                        noticedList.add(notice);
+                    }
                     count++;
                 }
                 nametest = noticedList.get(0).getSearchText();
@@ -418,7 +530,6 @@ public class SearchActivity extends AppCompatActivity {
                 acttest1 = actcount1;
                 acttest2 = actcount2;
                 sumtest = noticedList.size();
-
 
                 adapter.notifyDataSetChanged();
             }
@@ -433,24 +544,46 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //백버튼이 눌리고 1.5초안에 또 눌리면 종료가됨
-        if (pressedTime == 0) {
-            Toast.makeText(SearchActivity.this, " 한 번 더 누르면 종료됩니다.", Toast.LENGTH_LONG).show();
-            pressedTime = System.currentTimeMillis();
+        if(final_check == 0) {
+            Toast.makeText(SearchActivity.this, "창 모드로 전환됩니다.", Toast.LENGTH_LONG).show();
+            moveTaskToBack(true);
         }
-
         else {
-            int seconds = (int) (System.currentTimeMillis() - pressedTime);
-
-            if (seconds > 2000) {
+            //백버튼이 눌리고 1.5초안에 또 눌리면 종료가됨
+            if (pressedTime == 0) {
                 Toast.makeText(SearchActivity.this, " 한 번 더 누르면 종료됩니다.", Toast.LENGTH_LONG).show();
-                pressedTime = 0;
+                pressedTime = System.currentTimeMillis();
             }
+
             else {
-                finishAffinity();
-                System.runFinalization();
-                System.exit(0);
+                int seconds = (int) (System.currentTimeMillis() - pressedTime);
+
+                if (seconds > 2000) {
+                    Toast.makeText(SearchActivity.this, " 한 번 더 누르면 종료됩니다.", Toast.LENGTH_LONG).show();
+                    pressedTime = 0;
+                }
+                else {
+                    finishAffinity();
+                    System.runFinalization();
+                    System.exit(0);
+                }
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        // mHandler.sendEmptyMessage(100);
+        // final_check = 0;
+        // Toast.makeText(getApplicationContext(), "onResume", Toast.LENGTH_SHORT).show();
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        // mHandler.removeMessages(100);
+        // mTask.cancel(true);
+        // Toast.makeText(getApplicationContext(), "onStop", Toast.LENGTH_SHORT).show();
+        super.onStop();
     }
 }

@@ -13,9 +13,6 @@ public class NaverTranslate  {
 
     public String translate(String soricreMessage) throws  Exception {
 
-        String clientId = "wYRlTYlyvgQCJJ3lxZzo";//애플리케이션 클라이언트 아이디값";
-        String clientSecret = "B0cwT7BY6j";//애플리케이션 클라이언트 시크릿값";
-
         String text = URLEncoder.encode(soricreMessage, "UTF-8");
         String apiURL = "https://openapi.naver.com/v1/papago/n2mt";
         URL url = new URL(apiURL);

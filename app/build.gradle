@@ -9,14 +9,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        buildTypes.each {
-            it.buildConfigField 'String', 'API_KEY', '"AIzaSyAFeyhe6e9cF0R_ghp20X5CqHfKsbs_PBY"'
         }
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8

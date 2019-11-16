@@ -1,5 +1,7 @@
 package com.example.davichiar.scamera_android.Search;
 
+import android.view.View;
+
 public class Notice {
 
     String searchTitle, searchLink, searchImglink, searchContext, searchDate, searchNicname, searchAdd, searchActive, searchText;

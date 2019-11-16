@@ -2,7 +2,10 @@ package com.example.davichiar.scamera_android.Search;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.text.util.Linkify;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,6 +18,7 @@ import com.example.davichiar.scamera_android.R;
 import com.example.davichiar.scamera_android.Search.Notice;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NoticeListAdapter extends BaseAdapter {
@@ -50,8 +54,13 @@ public class NoticeListAdapter extends BaseAdapter {
 
         ImageView mainImage = (ImageView) v.findViewById(R.id.mainImage);
         TextView mainTitle = (TextView) v.findViewById(R.id.mainTitle);
+
+
         TextView mainContent = (TextView) v.findViewById(R.id.mainContent);
         TextView mainURL = (TextView) v.findViewById(R.id.mainURL);
+
+        mainTitle.setTextColor(Color.parseColor("#4374D9"));
+        mainURL.setTextColor(Color.parseColor("#4374D9"));
 
         try {
             if(noticeList.get(position).getSearchAdd().equals("미판정") || noticeList.get(position).getSearchActive().equals("미판정")){
@@ -78,7 +87,8 @@ public class NoticeListAdapter extends BaseAdapter {
             mainContent.setText(noticeList.get(position).getSearchContext() + "\n\n날짜 : " +
                     noticeList.get(position).getSearchDate() + "\n닉네임 : " + noticeList.get(position).getSearchNicname());
         }
-        catch(Exception e) {}
+        catch(Exception e) {
+        }
 
         return v;
     }
